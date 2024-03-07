@@ -15,7 +15,29 @@ class CommunityRepository {
     }
   }
 
-  async allCommunities () {
+  async joinCommunity (communityId, userId, username) {
+    try {
+      const community = await Community.findById(communityId)
+      if (!community) {
+        throw new Error('Community not found')
+      }
+
+      const isMember = community.members.some((member) => member._id.toString() === userId)
+
+      if (isMember) {
+        throw new Error('User is already a member of this community')
+      }
+
+      community.members.push({ _id: userId, username })
+      await community.save()
+
+      return community.toObject()
+    } catch (error) {
+      throw new Error(`Failed to join community: ${error.message}`)
+    }
+  }
+
+  async allCommunitiesforuser () {
     try {
       const communities = await Community.find().lean()
       return communities

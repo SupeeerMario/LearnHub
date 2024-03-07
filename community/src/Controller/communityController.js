@@ -38,9 +38,28 @@ class CommunityController {
     }
   }
 
-  async getAll (req, res) {
+  async joinCommunity (req, res) {
     try {
-      const communiies = await this.communityService.getAllCommunities()
+      const communityId = req.params.communityId
+      const userId = req.decodedUserId
+      const username = req.username
+
+      console.log(`Community ID: ${communityId}`)
+      console.log(`User ID: ${userId}`)
+      console.log(`Username: ${username}`)
+
+      const updatedCommunity = await this.communityService.joinCommunity(communityId, userId, username)
+      console.log(`Updated Community: ${JSON.stringify(updatedCommunity)}`)
+      res.json(updatedCommunity)
+    } catch (error) {
+      console.error(error)
+      res.status(500).json({ error: 'Internal Server Error' })
+    }
+  }
+
+  async getAllForUser (req, res) {
+    try {
+      const communiies = await this.communityService.getAllCommunitiesForUser()
       res.json(communiies)
     } catch (err) {
       res.status(400).json({ message: err.message })

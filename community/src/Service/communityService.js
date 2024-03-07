@@ -41,7 +41,16 @@ class CommunityService {
     }
   }
 
-  async getAllCommunities () {
+  async joinCommunity (communityId, userId, username) {
+    try {
+      const community = await this.communityRepository.joinCommunity(communityId, userId, username)
+      return community
+    } catch (error) {
+      throw new Error(`Failed to join community: ${error.message}`)
+    }
+  }
+
+  async getAllCommunitiesforuser () {
     try {
       const communiies = await this.communityRepository.allCommunities()
       return communiies

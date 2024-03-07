@@ -7,7 +7,8 @@ const communityController = new CommunityController()
 
 router.post('/new', communityMiddlewares.readCookie, communityController.addNewCommunity.bind(communityController))
 router.get('/get/:communityId', communityController.findCommunityById.bind(communityController))
-router.get('/getall', communityController.getAll.bind(communityController))
+router.post('/joinCommunity/:communityId', communityMiddlewares.userFromToken, communityController.joinCommunity.bind(communityController))
+router.get('/getallforuser', communityMiddlewares.userFromToken, communityController.getAllForUser.bind(communityController))
 router.patch('/:communityId', communityController.updateCommunity)
 
 module.exports = router

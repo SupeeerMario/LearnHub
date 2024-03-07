@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser')
 require('dotenv').config()
 
 function tokenassign (user) {
-  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' })
+  const token = jwt.sign({ userId: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' })
   return token
 }
 
