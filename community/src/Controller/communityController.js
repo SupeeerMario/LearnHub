@@ -59,14 +59,18 @@ class CommunityController {
 
   async getAllForUser (req, res) {
     try {
-      const communiies = await this.communityService.getAllCommunitiesForUser()
-      res.json(communiies)
+      const userId = req.decodedUserId
+      const communities = await this.communityService.getAllCommunitiesforuser(userId)
+      console.log(`received userId is  : ${userId}`)
+      console.log(`received communities are : ${communities}`)
+
+      res.json(communities)
     } catch (err) {
       res.status(400).json({ message: err.message })
     }
   }
 
-  async updateCommunity (req, res) {
+/*   async updateCommunity (req, res) {
     try {
       const communityId = req.params.communityId
       const updates = req.body
@@ -78,7 +82,7 @@ class CommunityController {
     } catch (error) {
       res.status(500).json({ message: 'Failed to update community', error: error.message })
     }
-  }
+  } */
 }
 
 module.exports = CommunityController

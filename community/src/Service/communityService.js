@@ -50,12 +50,14 @@ class CommunityService {
     }
   }
 
-  async getAllCommunitiesforuser () {
+  async getAllCommunitiesforuser (userId) {
     try {
-      const communiies = await this.communityRepository.allCommunities()
-      return communiies
+      const communities = await this.communityRepository.allCommunitiesforuser(userId)
+      console.log(`received communities are : ${communities}`)
+
+      return communities
     } catch (error) {
-      throw new Error(`Failed to fetch communiies: ${error.message}`)
+      throw new Error(`Failed to fetch communities: ${error.message}`)
     }
   }
 }

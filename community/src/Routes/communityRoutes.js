@@ -9,6 +9,6 @@ router.post('/new', communityMiddlewares.readCookie, communityController.addNewC
 router.get('/get/:communityId', communityController.findCommunityById.bind(communityController))
 router.post('/joinCommunity/:communityId', communityMiddlewares.userFromToken, communityController.joinCommunity.bind(communityController))
 router.get('/getallforuser', communityMiddlewares.userFromToken, communityController.getAllForUser.bind(communityController))
-router.patch('/:communityId', communityController.updateCommunity)
+/* router.patch('/:communityId', communityController.updateCommunity) */
 
 module.exports = router

@@ -1,4 +1,5 @@
 const Community = require('../models/community')
+const mongoose = require('mongoose')
 
 class CommunityRepository {
   async createCommunity (communityData) {
@@ -37,9 +38,11 @@ class CommunityRepository {
     }
   }
 
-  async allCommunitiesforuser () {
+  async allCommunitiesforuser (userId) {
     try {
-      const communities = await Community.find().lean()
+      const userIdObject = new mongoose.Types.ObjectId(userId)
+      const communities = await Community.find({ 'members._id': userIdObject }).lean()
+      console.log(`received communities are : ${communities}`)
       return communities
     } catch (error) {
       throw new Error(`Failed to fetch communities: ${error.message}`)
