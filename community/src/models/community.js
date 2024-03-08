@@ -8,15 +8,12 @@ const MemberSchema = new mongoose.Schema({
 const CommunitySchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: false },
-    ownerToken: { type: String, required: false, unique: false },
+    ownerID: { type: String, required: false, unique: false },
     isOwner: { type: Boolean, required: false, unique: false },
-    members: [MemberSchema] // This line is causing the error
+    members: [MemberSchema]
   },
   { timestamps: true }
 )
-
-// Remove the existing unique index on the ownerToken field
-CommunitySchema.index({ ownerToken: 1 }, { unique: false })
 
 const Community = mongoose.model('Community', CommunitySchema)
 

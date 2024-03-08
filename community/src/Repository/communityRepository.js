@@ -3,8 +3,15 @@ const mongoose = require('mongoose')
 
 class CommunityRepository {
   async createCommunity (communityData) {
-    const newCommunity = await Community.create(communityData)
-    return newCommunity.toObject()
+    try {
+      const newCommunity = await Community.create({
+        ...communityData,
+        members: communityData.members || []
+      })
+      return newCommunity.toObject()
+    } catch (error) {
+      throw new Error(`Community creation failed: ${error.message}`)
+    }
   }
 
   async findCommunityById (_id) {
@@ -23,7 +30,9 @@ class CommunityRepository {
         throw new Error('Community not found')
       }
 
-      const isMember = community.members.some((member) => member._id.toString() === userId)
+      console.log('Community:', community) // Add this line for debugging
+
+      const isMember = community.members && community.members.some((member) => member._id.toString() === userId)
 
       if (isMember) {
         throw new Error('User is already a member of this community')
@@ -47,6 +56,13 @@ class CommunityRepository {
     } catch (error) {
       throw new Error(`Failed to fetch communities: ${error.message}`)
     }
+  }
+
+  async updateUserRole (_id, isOwner) {
+    // Ensure isOwner is a boolean value
+    const updateObject = { isOwner: Boolean(isOwner) }
+    const community = await Community.findById(_id, updateObject, { new: true })
+    return community
   }
 }
 

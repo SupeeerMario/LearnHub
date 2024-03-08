@@ -9,8 +9,9 @@ class CommunityService {
   validateCommunityData (data) {
     const schema = joi.object({
       name: joi.string().required().label('Name'),
-      ownerToken: joi.string().required().label('OwnerToken'),
-      isOwner: joi.boolean().label('isOwner')
+      ownerID: joi.string().label('ownerID'),
+      isOwner: joi.boolean().label('isOwner'),
+      members: joi.array().label('members')
     })
     return schema.validate(data)
   }
@@ -23,7 +24,8 @@ class CommunityService {
       }
 
       const newCommunity = await this.communityRepository.createCommunity({
-        ...communityData
+        ...communityData,
+        members: communityData.members || []
       })
 
       return { message: 'Community created successfully', community: newCommunity }
@@ -58,6 +60,30 @@ class CommunityService {
       return communities
     } catch (error) {
       throw new Error(`Failed to fetch communities: ${error.message}`)
+    }
+  }
+
+  async updateIsOwner (_id, userId) {
+    try {
+      const community = await this.communityRepository.updateUserRole(_id, userId)
+      const communityDataIDPromise = this.getCommunityById(_id)
+
+      // Wait for the Promise to resolve
+      const communityOwnerID = await communityDataIDPromise
+      let isOwner = false
+
+      console.log(`communityOwnerID.ownerID: ${communityOwnerID.ownerID}`)
+      console.log(`userId: ${userId}`)
+
+      if (communityOwnerID.ownerID === userId) {
+        isOwner = true
+      }
+
+      console.log(`isOwner value: ${isOwner}`)
+
+      return [community, isOwner]
+    } catch (error) {
+      throw new Error(`Failed to update community: ${error.message}`)
     }
   }
 }

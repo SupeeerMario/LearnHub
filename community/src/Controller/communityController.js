@@ -7,17 +7,21 @@ class CommunityController {
 
   async addNewCommunity (req, res) {
     try {
-      const token = req.token
-      console.log(`token value is ${token}`)
+      const userId = req.decodedUserId
+      const userName = req.username
 
       const community = {
-        ownerToken: token,
+        ownerID: userId,
         name: req.body.name,
-        isOwner: false
+        isOwner: true,
+        members: [{
+          _id: userId,
+          username: userName
+        }]
       }
-
+      console.log(`community data: ${JSON.stringify(community)}`)
       const result = await this.communityService.newCommunity(community)
-
+      console.log(`ownerID : ${community.ownerID}`)
       res.json(result)
     } catch (error) {
       res.status(400).json({ message: error.message })
@@ -43,6 +47,7 @@ class CommunityController {
       const communityId = req.params.communityId
       const userId = req.decodedUserId
       const username = req.username
+      let isOwner = false
 
       console.log(`Community ID: ${communityId}`)
       console.log(`User ID: ${userId}`)
@@ -50,7 +55,12 @@ class CommunityController {
 
       const updatedCommunity = await this.communityService.joinCommunity(communityId, userId, username)
       console.log(`Updated Community: ${JSON.stringify(updatedCommunity)}`)
-      res.json(updatedCommunity)
+
+      if (updatedCommunity.ownerID === userId) {
+        isOwner = true
+      }
+
+      res.json({ ...updatedCommunity, isOwner }) // Send isOwner as part of the response
     } catch (error) {
       console.error(error)
       res.status(500).json({ error: 'Internal Server Error' })
@@ -61,28 +71,19 @@ class CommunityController {
     try {
       const userId = req.decodedUserId
       const communities = await this.communityService.getAllCommunitiesforuser(userId)
-      console.log(`received userId is  : ${userId}`)
-      console.log(`received communities are : ${communities}`)
 
-      res.json(communities)
+      const updatedCommunities = []
+
+      for (const community of communities) {
+        const [updatedCommunity, isOwner] = await this.communityService.updateIsOwner(community._id, userId)
+        updatedCommunities.push({ ...updatedCommunity.toObject(), isOwner })
+      }
+
+      res.json({ communities: updatedCommunities })
     } catch (err) {
       res.status(400).json({ message: err.message })
     }
   }
-
-/*   async updateCommunity (req, res) {
-    try {
-      const communityId = req.params.communityId
-      const updates = req.body
-
-      // Use your CommunityService to update the community
-      const result = await this.communityService.updateCommunity(communityId, updates)
-
-      res.json(result)
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to update community', error: error.message })
-    }
-  } */
 }
 
 module.exports = CommunityController

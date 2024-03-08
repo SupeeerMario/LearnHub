@@ -13,5 +13,5 @@ app.use(cookieParser())
 app.use('/community', communityRoutes)
 
 app.listen(port, '0.0.0.0', () => {
-  console.log(`Authentication service is running on port ${port}!`)
+  console.log(`Community service is running on port ${port}!`)
 })

@@ -5,7 +5,7 @@ const communityMiddlewares = require('../middlewares/communityMiddleware')
 
 const communityController = new CommunityController()
 
-router.post('/new', communityMiddlewares.readCookie, communityController.addNewCommunity.bind(communityController))
+router.post('/new', communityMiddlewares.userFromToken, communityController.addNewCommunity.bind(communityController))
 router.get('/get/:communityId', communityController.findCommunityById.bind(communityController))
 router.post('/joinCommunity/:communityId', communityMiddlewares.userFromToken, communityController.joinCommunity.bind(communityController))
 router.get('/getallforuser', communityMiddlewares.userFromToken, communityController.getAllForUser.bind(communityController))
