@@ -1,6 +1,6 @@
-const router = require('express').Router()
 const AuthService = require('../Service/service')
 const AuthMiddlewares = require('../middlewares/authMiddlewares')
+const tenYearsInSeconds = 10 * 365 * 24 * 60 * 60
 
 class AuthController {
   constructor () {
@@ -66,19 +66,11 @@ class AuthController {
   async setcookie (req, res) {
     try {
       const userToken = req.headers.authorization
-      res.setHeader('Set-Cookie', `token=${userToken}; Path=/; HttpOnly; Max-Age=3600`)
+      res.setHeader('Set-Cookie', `token=${userToken}; Path=/; HttpOnly; Max-Age=${tenYearsInSeconds}`)
       res.send('got a cookie')
     } catch (err) {
       res.status(400).json({ message: err.message })
     }
-  }
-
-  getRouter () {
-    return router
-      .post('/login', this.login.bind(this))
-      .post('/register', this.register.bind(this))
-      .get('/profile', this.getProfile.bind(this))
-      .get('/all', this.getAll.bind(this))
   }
 }
 
